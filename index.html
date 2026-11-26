@@ -95,7 +95,11 @@
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   var page = new URLSearchParams(location.search).get('page');
-  var target = APP_URL + (page ? '?page=' + encodeURIComponent(page) : '');
+  // បញ្ជូន parameter ទាំងអស់ (page, id, sig ពី Gmail ...) ទៅប្រព័ន្ធ — លើកលែង source/v/open/app
+  var qs = new URLSearchParams(location.search);
+  ['source', 'v', 'open', 'app'].forEach(function (k) { qs.delete(k); });
+  var target = APP_URL + (qs.toString() ? '?' + qs.toString() : '');
+  var wantOpen = /[?&]open=1\b/.test(location.search);
   $('openBtn').href = target;
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {});
@@ -156,7 +160,7 @@
   // PC/Mac (Browser ធម្មតា): បើកប្រព័ន្ធក្នុងទំព័រនេះភ្លាម — គ្មានផ្ទាំងសារ Google និងមិនលោតទៅ script.google.com
   var isMobile = isIOS || /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
   $('openBtn').addEventListener('click', function (e) { e.preventDefault(); launch(); });
-  if (isStandalone || fromApp || page || !isMobile) {
+  if (isStandalone || fromApp || page || wantOpen || !isMobile) {
     launch();
   } else {
     $('setup').classList.remove('hide');
