@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NGS Library</title>
 <meta name="description" content="ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#f8fafc">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -124,6 +124,10 @@
       var saved = null; try { saved = localStorage.getItem('ngs_user'); } catch (x) {}
       if (d.ngs === 'hello' && e.source) e.source.postMessage({ ngs: 'app', user: saved }, '*');
       if (d.ngs === 'reload' && (!window.__ngsReloadAt || Date.now() - window.__ngsReloadAt > 10000)) { window.__ngsReloadAt = Date.now(); pendingRestore = false; window.__ngsAfterReload = true; document.body.classList.remove('loaded'); f.classList.remove('ready'); f.src = f.src; }
+      if (d.ngs === 'theme' && /^#[0-9a-fA-F]{3,8}$/.test(d.color || '')) {
+        var tm = document.querySelector('meta[name="theme-color"]'); if (tm) tm.setAttribute('content', d.color);
+        document.documentElement.style.background = d.color; document.body.style.background = d.color;
+      }
       if (d.ngs === 'store') { try { if (d.user) localStorage.setItem('ngs_user', String(d.user)); else localStorage.removeItem('ngs_user'); } catch (x) {} }
       if (d.ngs === 'nav' && typeof d.url === 'string' && /^https:\/\/script\.google\.com\//.test(d.url)) {
         document.body.classList.remove('loaded'); f.classList.remove('ready');
