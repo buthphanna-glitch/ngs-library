@@ -43,8 +43,12 @@
   @keyframes r { to { transform: rotate(360deg); } }
   .foot { margin-top: 22px; font-size: 12px; color: #94a3b8; }
   #saProbe { position: fixed; top: 0; left: 0; width: 1px; height: env(safe-area-inset-top, 0px); visibility: hidden; pointer-events: none; }
-  #appFrame { position: fixed; top: 0; left: 0; right: 0; width: 100%; height: 100vh; height: 100lvh; border: 0; background: #fff; opacity: 0; transition: opacity .35s; }
-  #appFrame.ready { opacity: 1; }
+  .app-frame { position: fixed; top: 0; left: 0; right: 0; width: 100%; height: 100vh; height: 100lvh; border: 0; background: #fff; opacity: 0; transition: opacity .25s; }
+  .app-frame.ready { opacity: 1; }
+  .app-frame:not(.ready) { pointer-events: none; }
+  #navBar { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 50; background: linear-gradient(90deg, #1d4ed8, #16a34a); box-shadow: 0 0 8px rgba(29,78,216,.6); opacity: 0; transition: width 8s cubic-bezier(.1,.7,.2,1), opacity .3s; pointer-events: none; }
+  #navBar.go { width: 85%; opacity: 1; }
+  #navBar.done { width: 100%; opacity: 0; transition: width .2s, opacity .4s .2s; }
   html.app-mode, body.app-mode { padding: 0; background: #f8fafc; overflow: hidden; height: 100%; }
   body.app-mode .card { position: fixed; inset: 0; width: 100%; max-width: none; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; transition: opacity .35s; }
   body.app-mode .card > * { max-width: 420px; width: 100%; }
@@ -113,7 +117,7 @@
     $('launching').classList.remove('hide');
     var pr = document.createElement('div'); pr.id = 'saProbe'; document.body.appendChild(pr);
     var f = document.createElement('iframe');
-    f.id = 'appFrame';
+    f.id = 'appFrame'; f.className = 'app-frame';
     f.title = 'NGS Library';
     f.allow = 'clipboard-write; camera; fullscreen';
     // បើមាន Login ចងចាំទុក: បង្ហាញរូបឡូហ្គោរង់ចាំ រហូតដល់ចូល Dashboard (កុំឱ្យឃើញទំព័រ Log in មួយភ្លែត)
@@ -151,8 +155,25 @@
       }
       if (d.ngs === 'store') { try { if (d.user) localStorage.setItem('ngs_user', String(d.user)); else localStorage.removeItem('ngs_user'); } catch (x) {} }
       if (d.ngs === 'nav' && typeof d.url === 'string' && /^https:\/\/script\.google\.com\//.test(d.url)) {
-        document.body.classList.remove('loaded'); f.classList.remove('ready');
-        f.src = withApp(d.url);
+        // ប្ដូរទំព័រដោយមិនបង្ហាញផ្ទាំងរង់ចាំ: ទុកទំព័រចាស់ ហើយផ្ទុកទំព័រថ្មីនៅពីក្រោយ រួចប្ដូរពេលរួចរាល់
+        var bar = $('navBar'); if (!bar) { bar = document.createElement('div'); bar.id = 'navBar'; document.body.appendChild(bar); }
+        bar.className = ''; void bar.offsetWidth; bar.className = 'go';
+        var old = f, nf = document.createElement('iframe'), swapped = false;
+        nf.className = 'app-frame'; nf.title = old.title; nf.allow = old.allow; nf.style.height = old.style.height;
+        var swap = function () {
+          if (swapped) return; swapped = true;
+          nf.classList.add('ready'); bar.className = 'done';
+          setTimeout(function () { try { old.remove(); } catch (x) {} nf.id = 'appFrame'; }, 300);
+          f = nf;
+        };
+        nf.addEventListener('load', function () {
+          if (!swapped) { swap(); return; }
+          if (window.__ngsAfterReload) { window.__ngsAfterReload = false; setTimeout(function () { nf.classList.add('ready'); document.body.classList.add('loaded'); }, 900); return; }
+          nf.classList.add('ready'); document.body.classList.add('loaded');
+        });
+        setTimeout(swap, 20000);
+        nf.src = withApp(d.url);
+        document.body.appendChild(nf);
       }
     });
   }
