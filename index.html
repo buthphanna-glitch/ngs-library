@@ -106,7 +106,14 @@
     f.id = 'appFrame';
     f.title = 'NGS Library';
     f.allow = 'clipboard-write; camera; fullscreen';
-    f.addEventListener('load', function () { f.classList.add('ready'); document.body.classList.add('loaded'); });
+    // បើមាន Login ចងចាំទុក: បង្ហាញរូបឡូហ្គោរង់ចាំ រហូតដល់ចូល Dashboard (កុំឱ្យឃើញទំព័រ Log in មួយភ្លែត)
+    var pendingRestore = false; try { pendingRestore = !!localStorage.getItem('ngs_user'); } catch (x) {}
+    function reveal() { f.classList.add('ready'); document.body.classList.add('loaded'); }
+    f.addEventListener('load', function () {
+      if (pendingRestore) { setTimeout(function () { if (pendingRestore) { pendingRestore = false; reveal(); } }, 1500); return; }
+      if (window.__ngsAfterReload) { window.__ngsAfterReload = false; setTimeout(reveal, 900); return; }
+      reveal();
+    });
     f.src = target;
     document.body.appendChild(f);
     window.addEventListener('message', function (e) {
@@ -116,7 +123,7 @@
       // ចងចាំការ Login ក្នុង App (Storage ផ្ទាល់របស់ App — មិនបាត់ពេលបិទបើក App)
       var saved = null; try { saved = localStorage.getItem('ngs_user'); } catch (x) {}
       if (d.ngs === 'hello' && e.source) e.source.postMessage({ ngs: 'app', user: saved }, '*');
-      if (d.ngs === 'reload' && (!window.__ngsReloadAt || Date.now() - window.__ngsReloadAt > 10000)) { window.__ngsReloadAt = Date.now(); document.body.classList.remove('loaded'); f.classList.remove('ready'); f.src = f.src; }
+      if (d.ngs === 'reload' && (!window.__ngsReloadAt || Date.now() - window.__ngsReloadAt > 10000)) { window.__ngsReloadAt = Date.now(); pendingRestore = false; window.__ngsAfterReload = true; document.body.classList.remove('loaded'); f.classList.remove('ready'); f.src = f.src; }
       if (d.ngs === 'store') { try { if (d.user) localStorage.setItem('ngs_user', String(d.user)); else localStorage.removeItem('ngs_user'); } catch (x) {} }
       if (d.ngs === 'nav' && typeof d.url === 'string' && /^https:\/\/script\.google\.com\//.test(d.url)) {
         document.body.classList.remove('loaded'); f.classList.remove('ready');
