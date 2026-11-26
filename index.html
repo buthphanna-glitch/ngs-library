@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NGS Library</title>
+<meta name="description" content="ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NGS Library">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --blue: #1d4ed8; --green: #16a34a; --ink: #0f172a; --muted: #64748b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'Kantumruy Pro', system-ui, sans-serif; color: var(--ink);
+         background: radial-gradient(circle at 20% 10%, #dbeafe, transparent 45%),
+                     radial-gradient(circle at 85% 90%, #dcfce7, transparent 45%), #f8fafc;
+         display: flex; align-items: center; justify-content: center; padding: 24px;
+         padding-top: max(24px, env(safe-area-inset-top)); padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  .card { width: 100%; max-width: 420px; text-align: center; }
+  .logo { width: 150px; height: 150px; border-radius: 50%; background: #fff; padding: 4px; margin: 0 auto 20px;
+          box-shadow: 0 18px 40px -16px rgba(29,78,216,.45); animation: pop .6s cubic-bezier(.16,1,.3,1) both; }
+  .logo img { width: 100%; height: 100%; border-radius: 50%; display: block; }
+  @keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+  h1 { font-size: 24px; line-height: 1.5; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 4px; line-height: 1.7; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 0; cursor: pointer;
+         font: inherit; font-weight: 600; font-size: 16px; padding: 14px 18px; border-radius: 14px; margin-top: 12px;
+         text-decoration: none; transition: transform .15s; }
+  .btn:active { transform: scale(.98); }
+  .primary { color: #fff; background: linear-gradient(135deg, var(--blue), #2563eb 55%, var(--green)); box-shadow: 0 10px 24px -12px rgba(29,78,216,.7); }
+  .ghost { color: var(--blue); background: #fff; border: 1.5px solid #dbeafe; }
+  .box { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px 18px; margin-top: 18px; text-align: left; font-size: 14.5px; line-height: 1.9; }
+  .box b { color: var(--blue); }
+  .hide { display: none !important; }
+  .spin { width: 28px; height: 28px; border: 3px solid #dbeafe; border-top-color: var(--blue); border-radius: 50%; margin: 18px auto 0; animation: r .8s linear infinite; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  .foot { margin-top: 22px; font-size: 12px; color: #94a3b8; }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo"><img src="logo.png" alt="NGS SSW Library"></div>
+    <h1>បណ្ណាល័យ NGS</h1>
+    <p class="sub">វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី</p>
+
+    <div id="launching" class="hide">
+      <div class="spin"></div>
+      <p class="sub" style="margin-top:12px">កំពុងបើកប្រព័ន្ធ...</p>
+    </div>
+
+    <div id="setup" class="hide">
+      <button id="installBtn" class="btn primary hide">⬇️ ដំឡើង App</button>
+      <div id="iosHelp" class="box hide">
+        <b>ដំឡើងលើ iPhone / iPad</b><br>
+        ១. ចុចប៊ូតុង <b>Share</b> (ការ៉េមានព្រួញ ⬆️) ខាងក្រោម<br>
+        ២. រំកិលចុះ ហើយចុច <b>«Add to Home Screen»</b><br>
+        ៣. ចុច <b>«Add»</b> — រូប App នឹងលេចលើអេក្រង់
+      </div>
+      <div id="otherHelp" class="box hide">
+        <b>ដំឡើង App</b><br>
+        • <b>Android:</b> ចុច ⋮ → <b>«Install app»</b> ឬ «Add to Home screen»<br>
+        • <b>PC / Mac:</b> ចុចរូប ⊕ «Install» នៅចុងប្រអប់ URL
+      </div>
+      <a id="openBtn" class="btn ghost" href="#">បើកប្រព័ន្ធក្នុង Browser →</a>
+    </div>
+
+    <div id="offline" class="box hide">គ្មានអ៊ីនធឺណិត — សូមភ្ជាប់អ៊ីនធឺណិត ហើយបើកម្ដងទៀត។
+      <button class="btn primary" onclick="location.reload()">ព្យាយាមម្ដងទៀត</button></div>
+
+    <p class="foot">© Preah Sisowath High School · NGS SSW Library</p>
+  </main>
+
+<script>
+  // Link ប្រព័ន្ធ (Google Apps Script /exec) — បើប្ដូរ Deployment សូមកែតែត្រង់នេះ
+  var APP_URL = 'https://script.google.com/macros/s/AKfycbzwNuhNkX7rMK9szgZuNm7ub71RI5LUcfurzUR2OvLdRsrdvLjAZZ96kaE9A0vEsi_b/exec';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  var fromApp = /[?&]source=app\b/.test(location.search);
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  var page = new URLSearchParams(location.search).get('page');
+  var target = APP_URL + (page ? '?page=' + encodeURIComponent(page) : '');
+  $('openBtn').href = target;
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+
+  function launch() {
+    if (!navigator.onLine) { $('offline').classList.remove('hide'); return; }
+    $('launching').classList.remove('hide');
+    setTimeout(function () { location.replace(target); }, 350);
+  }
+
+  if (isStandalone || fromApp || page) {
+    launch();
+  } else {
+    $('setup').classList.remove('hide');
+    if (isIOS) $('iosHelp').classList.remove('hide'); else $('otherHelp').classList.remove('hide');
+  }
+
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); deferred = e;
+    $('installBtn').classList.remove('hide');
+    $('otherHelp').classList.add('hide');
+  });
+  $('installBtn').addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.finally(function () { deferred = null; $('installBtn').classList.add('hide'); });
+  });
+  window.addEventListener('appinstalled', function () {
+    $('installBtn').classList.add('hide');
+    $('otherHelp').classList.remove('hide');
+    $('otherHelp').innerHTML = '<b>✅ បានដំឡើងរួចរាល់!</b><br>រក App <b>«NGS Library»</b> លើអេក្រង់ ឬក្នុងបញ្ជី App។';
+  });
+</script>
+</body>
+</html>
