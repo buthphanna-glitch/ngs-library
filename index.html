@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NGS Library</title>
 <meta name="description" content="ប្រព័ន្ធគ្រប់គ្រងបណ្ណាល័យ វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី">
-<meta name="theme-color" content="#f8fafc">
+<meta name="theme-color" content="#eef2ff">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -44,7 +44,7 @@
   .foot { margin-top: 22px; font-size: 12px; color: #94a3b8; }
   #appFrame { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; opacity: 0; transition: opacity .35s; }
   #appFrame.ready { opacity: 1; }
-  body.app-mode { padding: 0; background: #fff; }
+  html.app-mode, body.app-mode { padding: 0; background: #eef2ff; }
   body.app-mode .card { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; transition: opacity .35s; }
   body.app-mode.loaded .card { opacity: 0; pointer-events: none; }
 </style>
@@ -100,7 +100,7 @@
   // បើកប្រព័ន្ធនៅក្នុង App (iframe ពេញអេក្រង់) — គ្មានរបារ URL និងគ្មានផ្ទាំងសារ Google Apps Script
   function launch() {
     if (!navigator.onLine) { $('offline').classList.remove('hide'); return; }
-    document.body.classList.add('app-mode');
+    document.body.classList.add('app-mode'); document.documentElement.classList.add('app-mode');
     $('launching').classList.remove('hide');
     var f = document.createElement('iframe');
     f.id = 'appFrame';
@@ -124,7 +124,7 @@
       var saved = null; try { saved = localStorage.getItem('ngs_user'); } catch (x) {}
       if (d.ngs === 'hello' && e.source) e.source.postMessage({ ngs: 'app', user: saved }, '*');
       if (d.ngs === 'reload' && (!window.__ngsReloadAt || Date.now() - window.__ngsReloadAt > 10000)) { window.__ngsReloadAt = Date.now(); pendingRestore = false; window.__ngsAfterReload = true; document.body.classList.remove('loaded'); f.classList.remove('ready'); f.src = f.src; }
-      if (d.ngs === 'theme' && /^#[0-9a-fA-F]{3,8}$/.test(d.color || '')) {
+      if (d.ngs === 'theme' && d.color === '#eef2ff') {
         var tm = document.querySelector('meta[name="theme-color"]'); if (tm) tm.setAttribute('content', d.color);
         document.documentElement.style.background = d.color; document.body.style.background = d.color;
       }
