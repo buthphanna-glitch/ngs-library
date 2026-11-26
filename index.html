@@ -98,7 +98,7 @@
   var target = APP_URL + (page ? '?page=' + encodeURIComponent(page) : '');
   $('openBtn').href = target;
 
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {});
 
   // បើកប្រព័ន្ធនៅក្នុង App (iframe ពេញអេក្រង់) — គ្មានរបារ URL និងគ្មានផ្ទាំងសារ Google Apps Script
   // សម្គាល់ថាបើកពី App (ប្រព័ន្ធនឹងប្ដូរទំព័រនៅក្នុង App ជានិច្ច)
