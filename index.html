@@ -99,6 +99,8 @@
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 
   // បើកប្រព័ន្ធនៅក្នុង App (iframe ពេញអេក្រង់) — គ្មានរបារ URL និងគ្មានផ្ទាំងសារ Google Apps Script
+  // សម្គាល់ថាបើកពី App (ប្រព័ន្ធនឹងប្ដូរទំព័រនៅក្នុង App ជានិច្ច)
+  function withApp(u) { return /[?&]app=1\b/.test(u) ? u : u + (u.indexOf('?') < 0 ? '?' : '&') + 'app=1'; }
   function launch() {
     if (!navigator.onLine) { $('offline').classList.remove('hide'); return; }
     document.body.classList.add('app-mode'); document.documentElement.classList.add('app-mode');
@@ -116,7 +118,7 @@
       if (window.__ngsAfterReload) { window.__ngsAfterReload = false; setTimeout(reveal, 900); return; }
       reveal();
     });
-    f.src = target;
+    f.src = withApp(target);
     document.body.appendChild(f);
     // iPhone: ឱ្យទំព័រពេញអេក្រង់ ពីឆកដល់បាត (កុំឱ្យសល់ឆ្នូតខាងក្រោម)
     function fit() {
@@ -144,7 +146,7 @@
       if (d.ngs === 'store') { try { if (d.user) localStorage.setItem('ngs_user', String(d.user)); else localStorage.removeItem('ngs_user'); } catch (x) {} }
       if (d.ngs === 'nav' && typeof d.url === 'string' && /^https:\/\/script\.google\.com\//.test(d.url)) {
         document.body.classList.remove('loaded'); f.classList.remove('ready');
-        f.src = d.url;
+        f.src = withApp(d.url);
       }
     });
   }
