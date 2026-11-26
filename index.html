@@ -174,6 +174,15 @@
         setTimeout(swap, 20000);
         nf.src = withApp(d.url);
         document.body.appendChild(nf);
+        // ចងចាំទំព័របច្ចុប្បន្នក្នុង URL — ពេល Refresh នៅទំព័រដដែល មិនត្រឡប់ទៅទំព័រដើម
+        try {
+          var np = new URL(d.url).searchParams; np.delete('app');
+          var keep = new URLSearchParams(location.search); var nq = new URLSearchParams();
+          ['source'].forEach(function (k) { if (keep.get(k)) nq.set(k, keep.get(k)); });
+          np.forEach(function (v, k) { nq.set(k, v); });
+          if (!np.get('page')) nq.set('open', '1');
+          history.replaceState(null, '', location.pathname + (nq.toString() ? '?' + nq.toString() : ''));
+        } catch (x) {}
       }
     });
   }
