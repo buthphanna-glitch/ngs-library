@@ -74,7 +74,7 @@
         • <b>Android:</b> ចុច ⋮ → <b>«Install app»</b> ឬ «Add to Home screen»<br>
         • <b>PC / Mac:</b> ចុចរូប ⊕ «Install» នៅចុងប្រអប់ URL
       </div>
-      <a id="openBtn" class="btn ghost" href="#">បើកប្រព័ន្ធក្នុង Browser →</a>
+      <a id="openBtn" class="btn ghost" href="#">បើកប្រព័ន្ធ (មិនដំឡើង) →</a>
     </div>
 
     <div id="offline" class="box hide">គ្មានអ៊ីនធឺណិត — សូមភ្ជាប់អ៊ីនធឺណិត ហើយបើកម្ដងទៀត។
@@ -151,7 +151,10 @@
     });
   }
 
-  if (isStandalone || fromApp || page) {
+  // PC/Mac (Browser ធម្មតា): បើកប្រព័ន្ធក្នុងទំព័រនេះភ្លាម — គ្មានផ្ទាំងសារ Google និងមិនលោតទៅ script.google.com
+  var isMobile = isIOS || /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+  $('openBtn').addEventListener('click', function (e) { e.preventDefault(); launch(); });
+  if (isStandalone || fromApp || page || !isMobile) {
     launch();
   } else {
     $('setup').classList.remove('hide');
