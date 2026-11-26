@@ -113,7 +113,10 @@
       var d = e.data; if (!d || !d.ngs) return;
       var host = ''; try { host = new URL(e.origin).hostname; } catch (x) {}
       if (!/(\.googleusercontent\.com|script\.google\.com)$/.test(host)) return;
-      if (d.ngs === 'hello' && e.source) e.source.postMessage({ ngs: 'app' }, '*');
+      // ចងចាំការ Login ក្នុង App (Storage ផ្ទាល់របស់ App — មិនបាត់ពេលបិទបើក App)
+      var saved = null; try { saved = localStorage.getItem('ngs_user'); } catch (x) {}
+      if (d.ngs === 'hello' && e.source) e.source.postMessage({ ngs: 'app', user: saved }, '*');
+      if (d.ngs === 'store') { try { if (d.user) localStorage.setItem('ngs_user', String(d.user)); else localStorage.removeItem('ngs_user'); } catch (x) {} }
       if (d.ngs === 'nav' && typeof d.url === 'string' && /^https:\/\/script\.google\.com\//.test(d.url)) {
         document.body.classList.remove('loaded'); f.classList.remove('ready');
         f.src = d.url;
