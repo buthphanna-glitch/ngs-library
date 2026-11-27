@@ -42,6 +42,7 @@
   .spin { width: 28px; height: 28px; border: 3px solid #dbeafe; border-top-color: var(--blue); border-radius: 50%; margin: 18px auto 0; animation: r .8s linear infinite; }
   @keyframes r { to { transform: rotate(360deg); } }
   .foot { margin-top: 22px; font-size: 12px; color: #94a3b8; }
+  #sbCover { position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: #eef2ff; z-index: 40; pointer-events: none; }
   #saProbe { position: fixed; top: 0; left: 0; width: 1px; height: env(safe-area-inset-top, 0px); visibility: hidden; pointer-events: none; }
   .app-frame { position: fixed; top: 0; left: 0; right: 0; width: 100%; height: 100vh; height: 100lvh; border: 0; background: #fff; opacity: 0; transition: opacity .25s; }
   .app-frame.ready { opacity: 1; }
@@ -117,6 +118,7 @@
     document.body.classList.add('app-mode'); document.documentElement.classList.add('app-mode');
     $('launching').classList.remove('hide');
     var pr = document.createElement('div'); pr.id = 'saProbe'; document.body.appendChild(pr);
+    var sbc = document.createElement('div'); sbc.id = 'sbCover'; document.body.appendChild(sbc);
     var f = document.createElement('iframe');
     f.id = 'appFrame'; f.className = 'app-frame';
     f.title = 'NGS Library';
@@ -133,22 +135,17 @@
     document.body.appendChild(f);
     // iPhone: ឱ្យទំព័រពេញអេក្រង់ ពីឆកដល់បាត (កុំឱ្យសល់ឆ្នូតខាងក្រោម)
     function fit() {
-      var h = window.innerHeight;
-      // App លើ iPhone: ពេលខ្លះ iOS មិនប្រាប់ថាជា App (standalone) — ពិនិត្យតាមរបារម៉ោងខាងលើ និង ?source=app ផងដែរ
-      var appLike = isStandalone || fromApp || window.matchMedia('(display-mode: fullscreen)').matches || (pr && pr.offsetHeight > 20);
-      if (isIOS && appLike) {
-        var land = window.matchMedia('(orientation: landscape)').matches;
-        var full = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
-        if (full > h) h = full;
-      }
-      h = Math.max(h, document.documentElement.clientHeight || 0);
-      f.style.height = h + 'px';
+      // ដាក់ទំព័រនៅក្រោមរបារម៉ោង ដោយ CSS (env) — iOS គណនាដោយខ្លួនឯង មិនពឹងលើពេលវេលា JavaScript
+      // កម្ពស់ = ផ្ទៃដែល iOS បង្ហាញបាន (innerHeight) ដក របារម៉ោង
+      var h = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+      f.style.top = 'env(safe-area-inset-top, 0px)';
+      f.style.height = 'calc(' + h + 'px - env(safe-area-inset-top, 0px))';
     }
     fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); });
     // ផ្ញើកម្ពស់របារម៉ោងទៅទំព័រម្ដងទៀត ពេលវាប្ដូរ (បើក App ពីផ្ទៃខាងក្រោយ iOS ប្រាប់យឺត)
     var lastInset = -1;
     function pushInset(force) {
-      var v = pr.offsetHeight || 0;
+      var v = 0; // ទំព័រនៅក្រោមរបារម៉ោងរួចហើយ (CSS) — មិនត្រូវការគម្លាតបន្ថែម
       if (!force && v === lastInset) return;
       lastInset = v;
       try { f.contentWindow.postMessage({ ngs: 'inset', inset: v }, '*'); } catch (x) {}
@@ -168,8 +165,7 @@
         // iPhone: រង់ចាំរហូតដល់ដឹងកម្ពស់របារម៉ោង/ថ្ម (ពេលបើក App ដំបូង វាអាចនៅ 0)
         var src = e.source, tries = 0;
         (function reply() {
-          if (isIOS && (isStandalone || fromApp) && !pr.offsetHeight && tries++ < 20) { setTimeout(reply, 100); return; }
-          try { src.postMessage({ ngs: 'app', user: saved, inset: pr.offsetHeight || 0 }, '*'); } catch (x) {}
+          try { src.postMessage({ ngs: 'app', user: saved, inset: 0 }, '*'); } catch (x) {}
         })();
         fit();
       }
@@ -184,7 +180,7 @@
         var bar = $('navBar'); if (!bar) { bar = document.createElement('div'); bar.id = 'navBar'; document.body.appendChild(bar); }
         bar.className = ''; void bar.offsetWidth; bar.className = 'go';
         var old = f, nf = document.createElement('iframe'), swapped = false;
-        nf.className = 'app-frame'; nf.title = old.title; nf.allow = old.allow; nf.style.height = old.style.height; nf.style.position = old.style.position;
+        nf.className = 'app-frame'; nf.title = old.title; nf.allow = old.allow; nf.style.height = old.style.height; nf.style.top = old.style.top; nf.style.position = old.style.position;
         var swap = function () {
           if (swapped) return; swapped = true;
           nf.classList.add('ready'); bar.className = 'done';
