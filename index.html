@@ -144,7 +144,20 @@
       h = Math.max(h, document.documentElement.clientHeight || 0);
       f.style.height = h + 'px';
     }
-    fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); }); f.addEventListener('load', fit); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+    fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); });
+    // ផ្ញើកម្ពស់របារម៉ោងទៅទំព័រម្ដងទៀត ពេលវាប្ដូរ (បើក App ពីផ្ទៃខាងក្រោយ iOS ប្រាប់យឺត)
+    var lastInset = -1;
+    function pushInset(force) {
+      var v = pr.offsetHeight || 0;
+      if (!force && v === lastInset) return;
+      lastInset = v;
+      try { f.contentWindow.postMessage({ ngs: 'inset', inset: v }, '*'); } catch (x) {}
+    }
+    f.addEventListener('load', function () { lastInset = -1; setTimeout(pushInset, 300); setTimeout(pushInset, 1500); });
+    var insetTick = 0, insetIv = setInterval(function () { pushInset(); if (++insetTick > 40) clearInterval(insetIv); }, 250);
+    window.addEventListener('resize', function () { setTimeout(function () { pushInset(true); }, 200); });
+    window.addEventListener('pageshow', function () { setTimeout(function () { pushInset(true); fit(); }, 300); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(function () { pushInset(true); fit(); }, 300); }); f.addEventListener('load', fit); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
     window.addEventListener('message', function (e) {
       var d = e.data; if (!d || !d.ngs) return;
       var host = ''; try { host = new URL(e.origin).hostname; } catch (x) {}
@@ -176,7 +189,7 @@
           if (swapped) return; swapped = true;
           nf.classList.add('ready'); bar.className = 'done';
           setTimeout(function () { try { old.remove(); } catch (x) {} nf.id = 'appFrame'; }, 300);
-          f = nf; fit();
+          f = nf; fit(); setTimeout(function () { pushInset(true); }, 100);
         };
         nf.addEventListener('load', function () {
           // រង់ចាំបន្តិច ឱ្យទំព័រថ្មីគូររួច (កុំឱ្យឃើញផ្ទាំងសមួយភ្លែត)
