@@ -49,7 +49,7 @@
   #navBar { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 50; background: linear-gradient(90deg, #1d4ed8, #16a34a); box-shadow: 0 0 8px rgba(29,78,216,.6); opacity: 0; transition: width 8s cubic-bezier(.1,.7,.2,1), opacity .3s; pointer-events: none; }
   #navBar.go { width: 85%; opacity: 1; }
   #navBar.done { width: 100%; opacity: 0; transition: width .2s, opacity .4s .2s; }
-  html.app-mode, body.app-mode { padding: 0; background: linear-gradient(180deg, #eef2ff 0%, #f5f3ff 50%, #fce7f3 100%) fixed; background-color: #fce7f3; overflow: hidden; height: 100%; }
+  html.app-mode, body.app-mode { padding: 0; background: linear-gradient(90deg, #f3f0fb 0%, #fbf4f9 50%, #f8d4ea 100%) fixed; background-color: #fbf0f7; overflow: hidden; height: 100%; }
   .app-frame { background: transparent !important; }
   body.app-mode .card { position: fixed; inset: 0; width: 100%; max-width: none; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; transition: opacity .35s; }
   body.app-mode .card > * { max-width: 420px; width: 100%; }
@@ -143,11 +143,6 @@
       }
       h = Math.max(h, document.documentElement.clientHeight || 0);
       f.style.height = h + 'px';
-      // iPhone (App): iOS កាត់អ្វីដែល "fixed" ត្រឹមផ្ទៃមើល (ខ្លីជាងអេក្រង់) — ប្រើ absolute និងពង្រីកទំព័រឱ្យស្មើអេក្រង់ ដើម្បីពេញដល់បាត
-      if (isIOS && appLike && h > window.innerHeight) {
-        f.style.position = 'absolute';
-        document.documentElement.style.height = h + 'px'; document.body.style.height = h + 'px';
-      }
     }
     fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); }); f.addEventListener('load', fit); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
     window.addEventListener('message', function (e) {
