@@ -184,7 +184,8 @@
           f = nf; fit();
         };
         nf.addEventListener('load', function () {
-          if (!swapped) { swap(); return; }
+          // រង់ចាំបន្តិច ឱ្យទំព័រថ្មីគូររួច (កុំឱ្យឃើញផ្ទាំងសមួយភ្លែត)
+          if (!swapped) { setTimeout(swap, 600); return; }
           if (window.__ngsAfterReload) { window.__ngsAfterReload = false; setTimeout(function () { nf.classList.add('ready'); document.body.classList.add('loaded'); }, 900); return; }
           nf.classList.add('ready'); document.body.classList.add('loaded');
         });
