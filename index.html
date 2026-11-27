@@ -134,7 +134,9 @@
     // iPhone: ឱ្យទំព័រពេញអេក្រង់ ពីឆកដល់បាត (កុំឱ្យសល់ឆ្នូតខាងក្រោម)
     function fit() {
       var h = window.innerHeight;
-      if (isIOS && isStandalone) {
+      // App លើ iPhone: ពេលខ្លះ iOS មិនប្រាប់ថាជា App (standalone) — ពិនិត្យតាមរបារម៉ោងខាងលើ និង ?source=app ផងដែរ
+      var appLike = isStandalone || fromApp || window.matchMedia('(display-mode: fullscreen)').matches || (pr && pr.offsetHeight > 20);
+      if (isIOS && appLike) {
         var land = window.matchMedia('(orientation: landscape)').matches;
         var full = land ? Math.min(screen.width, screen.height) : Math.max(screen.width, screen.height);
         if (full > h) h = full;
@@ -153,7 +155,7 @@
         // iPhone: រង់ចាំរហូតដល់ដឹងកម្ពស់របារម៉ោង/ថ្ម (ពេលបើក App ដំបូង វាអាចនៅ 0)
         var src = e.source, tries = 0;
         (function reply() {
-          if (isIOS && isStandalone && !pr.offsetHeight && tries++ < 20) { setTimeout(reply, 100); return; }
+          if (isIOS && (isStandalone || fromApp) && !pr.offsetHeight && tries++ < 20) { setTimeout(reply, 100); return; }
           try { src.postMessage({ ngs: 'app', user: saved, inset: pr.offsetHeight || 0 }, '*'); } catch (x) {}
         })();
         fit();
