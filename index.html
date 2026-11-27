@@ -144,7 +144,23 @@
       h = Math.max(h, document.documentElement.clientHeight || 0);
       f.style.height = h + 'px';
     }
-    fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); }); f.addEventListener('load', fit); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
+    fit(); [100, 400, 1000, 2000, 3500].forEach(function (ms) { setTimeout(fit, ms); });
+    // ព័ត៌មានពិនិត្យកម្ពស់អេក្រង់ (បង្ហាញ ៣ ដងដំបូង ១០ វិនាទី) — សម្រាប់ដោះស្រាយឆ្នូតខាងក្រោម
+    try {
+      var dn = Number(localStorage.getItem('ngs_dbg6') || 0);
+      if (isIOS && dn < 3) {
+        localStorage.setItem('ngs_dbg6', String(dn + 1));
+        var dbg = document.createElement('div');
+        dbg.style.cssText = 'position:fixed;left:8px;right:8px;top:45%;z-index:99;background:rgba(15,23,42,.85);color:#fff;font:12px/1.5 monospace;padding:8px 10px;border-radius:10px;pointer-events:none;text-align:center';
+        document.body.appendChild(dbg);
+        var upd = function () {
+          var vv = window.visualViewport ? Math.round(visualViewport.height) : 0;
+          dbg.textContent = 'ih=' + innerHeight + ' ch=' + document.documentElement.clientHeight + ' vv=' + vv + ' sh=' + screen.height + ' sw=' + screen.width + ' pr=' + pr.offsetHeight + ' st=' + (isStandalone ? 1 : 0) + ' app=' + (fromApp ? 1 : 0) + ' fh=' + f.style.height + ' ' + (navigator.userAgent.match(/OS [\d_]+/) || [''])[0];
+        };
+        upd(); var di = setInterval(upd, 500);
+        setTimeout(function () { clearInterval(di); dbg.remove(); }, 10000);
+      }
+    } catch (x) {} f.addEventListener('load', fit); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 300); });
     window.addEventListener('message', function (e) {
       var d = e.data; if (!d || !d.ngs) return;
       var host = ''; try { host = new URL(e.origin).hostname; } catch (x) {}
